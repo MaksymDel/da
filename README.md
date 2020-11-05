@@ -4,7 +4,7 @@ Dir stucture:
 ```
 * faieseq (clonned fairseq repo)
 * data-prep (copy from `/gpfs/hpc/projects/nlpgroup/bergamot/data-prep`)
-* checkpoints (created automatically by fairseq)
+* experiments (for model checkpoints and tb log; subfolders include "concat", "finetuned_europarl", "domain_control", etc.)
 * scripts (running commands for different DA scenarious and data prep)
 ```
 
@@ -23,6 +23,7 @@ cd fairseq
 pip install --editable ./
 
 pip install tensorboard
+pip install tensorboardX
 ```
 
 ## Train 
