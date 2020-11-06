@@ -1,7 +1,7 @@
 #!/bin/bash
 ​
 #The name of the job is train
-#SBATCH -J concat_base
+#SBATCH -J fsbase
 ​
 #The job requires 1 compute node
 #SBATCH -N 1
@@ -13,30 +13,32 @@
 #SBATCH -t 192:00:00
 ​
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=max.del.edu@gmail.com
+#SBATCH --mail-user=elizaveta.korotkova@gmail.com
 ​
 #SBATCH --mem=20GB
 ​
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:tesla:1
-​
+	
 module load python/3.6.3/CUDA
 ​
-conda activate da
+conda activate faisreq-da
 ​
-EXP_NAME="concat_base"
-SAVE_DIR="experiments/"$EXP_NAME
+EXP_NAME=concat_base
+SAVE_DIR=experiments/$EXP_NAME
+DATA_PATH=data-prep
 
+​
 fairseq-train \
-    data-prep/bin-data-en-et-base \
+    $DATA_PATH/bin-data-en-et-base \
     --arch transformer --share-decoder-input-output-embed \
     --optimizer adam --adam-betas '(0.9, 0.98)' --clip-norm 0.0 \
     --lr 5e-4 --lr-scheduler inverse_sqrt --warmup-updates 4000 \
     --dropout 0.3 --weight-decay 0.0 \
     --criterion label_smoothed_cross_entropy --label-smoothing 0.1 \
-    --max-tokens 4096 \
+    --max-tokens 15000 \
+    --max-epoch 35 \
     --log-format json \
     --save-dir $SAVE_DIR \
-    --tensorboard-logdir $SAVE_DIR/"log-tb" \
-    --max-epoch 35
-    2>&1 | tee $SAVE_DIR/"log.out"
+    --tensorboard-logdir $SAVE_DIR/log-tb \
+    2>&1 | tee $SAVE_DIR/log.out
