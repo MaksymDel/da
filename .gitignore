@@ -3,3 +3,4 @@ fairseq
 data-prep
 log-tb
 experiments
+.vscode
