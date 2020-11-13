@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #The name of the job is train
-#SBATCH -J concat_base
+#SBATCH -J docall
 
 #The job requires 1 compute node
 #SBATCH -N 1
@@ -20,20 +20,27 @@
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:tesla:1
 
+#SBATCH --exclude=falcon3
+
 module load python/3.6.3/CUDA
 
-conda activate da
+source activate da
 
-EXP_NAME="concat_base_big_batch"
-SAVE_DIR="experiments/"$EXP_NAME
+LANG_PAIR="en-et"
+EXP_NAME="concat"
+SAVE_DIR="experiments/$LANG_PAIR/$EXP_NAME"
+DATA_PATH="data-prep/bin-data-en-et-base"
+
+mkdir $SAVE_DIR
 
 fairseq-train \
-    data-prep/bin-data-en-et-base \
-    --arch transformer --share-decoder-input-output-embed \
+    $DATA_PATH \
+    --arch transformer --max-epoch 60 \
     --optimizer adam --adam-betas '(0.9, 0.98)' --clip-norm 0.0 \
     --lr 5e-4 --lr-scheduler inverse_sqrt --warmup-updates 4000 \
     --dropout 0.3 --weight-decay 0.0 \
     --criterion label_smoothed_cross_entropy --label-smoothing 0.1 \
+    --eval-bleu --eval-bleu-remove-bpe=sentencepiece \
     --max-tokens 15000 \
     --log-format json \
     --save-dir $SAVE_DIR \
