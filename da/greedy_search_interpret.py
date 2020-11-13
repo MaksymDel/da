@@ -11,6 +11,14 @@ from transformers.utils import logging
 
 logger = logging.get_logger(__name__)
 
+"""
+Usage:
+
+from types import MethodType
+from da.greedy_search_interpret import greedy_search_interpret
+
+model_hf.greedy_search = MethodType(greedy_search_interpret, model_hf)
+"""
 def greedy_search_interpret(
     self,
     input_ids: torch.LongTensor,
