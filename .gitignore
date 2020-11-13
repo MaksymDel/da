@@ -4,3 +4,5 @@ data-prep
 log-tb
 experiments
 .vscode
+*/__pycache__
+*/.ipynb_checkpoints
