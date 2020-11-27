@@ -1,5 +1,6 @@
 checkpoints
 fairseq
+transformers
 data-prep
 log-tb
 experiments
