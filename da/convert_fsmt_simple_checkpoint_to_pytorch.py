@@ -13,8 +13,8 @@ from fairseq.tasks.translation import TranslationTask
 from fairseq.hub_utils import GeneratorHubInterface
 
 from transformers import WEIGHTS_NAME, logging
-from transformers.configuration_fsmt import FSMTConfig
-from transformers.modeling_fsmt import FSMTForConditionalGeneration
+from transformers.models.fsmt.configuration_fsmt import FSMTConfig
+from transformers.models.fsmt.modeling_fsmt import FSMTForConditionalGeneration
 
 
 def convert_fsmt_simple_checkpoint_to_pytorch(fsmt_checkpoint_path, pytorch_dump_folder_path, data_path, spm_model_path):

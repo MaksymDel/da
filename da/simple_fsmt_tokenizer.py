@@ -31,7 +31,7 @@ def load_vocab(vocab_file):
     return vocab
 
 
-class HuggingFseqTokenizer(PreTrainedTokenizer):
+class SimpleFSMTTokenizer(PreTrainedTokenizer):
     r"""
     Constructs a XXX tokenizer. Based on XXX.
 

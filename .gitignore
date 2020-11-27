@@ -1,4 +1,5 @@
 checkpoints
+lib
 fairseq
 transformers
 data-prep
@@ -7,3 +8,5 @@ experiments
 .vscode
 */__pycache__
 */.ipynb_checkpoints
+da/__pycache__/
+da/__pycache__
