@@ -164,6 +164,16 @@ def _debiased_dot_product_similarity(z: Tensor,
             + sq_norm_x * sq_norm_y / ((size - 1) * (size - 2)))
 
 
+def maybe_convert_to_torch(x, y):
+    if not isinstance(x, Tensor):
+        x = torch.from_numpy(x)
+
+    if not isinstance(y, Tensor):
+        y = torch.from_numpy(y)
+
+    return x, y
+
+
 def linear_cka_distance(x: Tensor,
                         y: Tensor,
                         reduce_bias: bool
@@ -178,8 +188,12 @@ def linear_cka_distance(x: Tensor,
     Returns:
 
     """
+    x, y = maybe_convert_to_torch(x, y)
 
     if x.size(0) != y.size(0):
+        print(type(x))
+        print(x.size())
+        print(x.shape)
         raise ValueError(f'x.size(0) == y.size(0) is expected, but got {x.size(0)=}, {y.size(0)=} instead.')
 
     x = _zero_mean(x, dim=0)
@@ -198,4 +212,27 @@ def linear_cka_distance(x: Tensor,
         dot_prod = _debiased_dot_product_similarity(dot_prod, sum_row_x, sum_row_y, sq_norm_x, sq_norm_y, size)
         norm_x = _debiased_dot_product_similarity(norm_x.pow_(2), sum_row_x, sum_row_y, sq_norm_x, sq_norm_y, size)
         norm_y = _debiased_dot_product_similarity(norm_y.pow_(2), sum_row_x, sum_row_y, sq_norm_x, sq_norm_y, size)
-    return dot_prod / (norm_x * norm_y)
+    
+    r = dot_prod / (norm_x * norm_y)
+    return 1 - r
+
+def compute_similarity(x: Tensor,
+                       y: Tensor,
+                       sim: str
+                       ):
+    
+    x, y = maybe_convert_to_torch(x, y)
+
+    if sim == "cka":
+        res = linear_cka_distance(x, y, False)
+    elif sim == "svcca":
+        res = svcca_distance(x, y, 0.99, 'svd')
+    elif sim == "pwcca":
+        res = pwcca_distance(x, y, 'qr')
+    # elif sim == 'cca':
+    #     res = 1 - cca(x, y, 'svd')[2].sum()
+    #     # TODO: check for correctness
+    else:
+        raise ValueError(f"{sim} is not the known similarity")
+
+    return 1 - res.item()
