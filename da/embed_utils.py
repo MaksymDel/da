@@ -88,7 +88,7 @@ def extract_sent_reps_corpora(data_dict_raw, tokenizer_hf, encoder_hf, layer_id,
     return data_dict_encoded
 
 
-def compute_doc_reps(data_encoded, doc_ids, device):
+def compute_doc_reps(data_encoded, doc_ids):
 
     all_encoded = []
     all_ids = []
