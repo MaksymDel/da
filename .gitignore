@@ -9,3 +9,5 @@ experiments
 */.ipynb_checkpoints
 __pycache__/
 *.pyc
+hypothesis
+da/fsmt/__pycache__

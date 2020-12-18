@@ -120,3 +120,18 @@ def compute_doc_reps(data_encoded, doc_ids):
         i += len(v)
 
     return res_dict
+
+
+def read_doc_indexed_data(split):
+    data_dict_raw = defaultdict(list)
+    doc_ids = defaultdict(list)
+
+    domain_names = ["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
+    for domain_name in domain_names:
+        fn = f"experiments/doc-indices/sp-cl-{domain_name}.en-et.docs.{split}.both"
+        with open(fn) as f:
+            for l in f.readlines():
+                doc_ids[domain_name].append(l[:-1].split('\t')[0])
+                data_dict_raw[domain_name].append(l[:-1].split('\t')[1])
+
+    return data_dict_raw, doc_ids
