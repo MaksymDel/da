@@ -6,20 +6,6 @@ import numpy as np
 import scipy.stats as ss
 from sklearn.cluster import KMeans
 
-def cramers_corrected_stat(confusion_matrix):
-    """ calculate Cramers V statistic for categorial-categorial association.
-        uses correction from Bergsma and Wicher, 
-        Journal of the Korean Statistical Society 42 (2013): 323-328
-    """
-    chi2 = ss.chi2_contingency(confusion_matrix)[0]
-    n = confusion_matrix.sum().sum()
-    phi2 = chi2/n
-    r,k = confusion_matrix.shape
-    phi2corr = max(0, phi2 - ((k-1)*(r-1))/(n-1))    
-    rcorr = r - ((r-1)**2)/(n-1)
-    kcorr = k - ((k-1)**2)/(n-1)
-    return np.sqrt(phi2corr / min( (kcorr-1), (rcorr-1)))
-
 
 def flatten_dict(dct):
     all_encoded = []
@@ -38,9 +24,9 @@ def flatten_dict(dct):
 
 def kmeans_train(data_encoded, num_clusters):
 
-    all_encoded, labels_true = flatten_dict(data_encoded)  
+    all_encoded, _ = flatten_dict(data_encoded)  
 
-    kmeans = KMeans(n_clusters=num_clusters, random_state=0, n_init=5).fit(all_encoded)
+    kmeans = KMeans(n_clusters=num_clusters, random_state=0, n_init=10).fit(all_encoded) # 5 for original results
 
     return kmeans
 
@@ -59,9 +45,6 @@ def kmeans_predict(kmeans_model, data_encoded, train=False):
 
 def train_kmeans_doc_sent(savedir):
     np.random.seed(21)
-
-    model_name  = 'xlm-roberta-base'
-    savedir = f"experiments/en_et_{model_name}/internals-docs"
 
     # Train k-means on sentence embeddings
     sent_enc_path = f"{savedir}/sent_means_train.pkl"
@@ -98,4 +81,21 @@ def train_kmeans_doc_sent(savedir):
     fn = f"{savedir}/kmeans_train_doc.pkl"
     print(f"Saving to {fn}")
     with open(fn, 'wb') as f:
-        pickle.dump(kmeans_docs, f)    
+        pickle.dump(kmeans_docs, f)
+
+
+def cramers_corrected_stat(confusion_matrix):
+    """ calculate Cramers V statistic for categorial-categorial association.
+        uses correction from Bergsma and Wicher, 
+        Journal of the Korean Statistical Society 42 (2013): 323-328
+    """
+    chi2 = ss.chi2_contingency(confusion_matrix)[0]
+    n = confusion_matrix.sum().sum()
+    phi2 = chi2/n
+    r,k = confusion_matrix.shape
+    phi2corr = max(0, phi2 - ((k-1)*(r-1))/(n-1))    
+    rcorr = r - ((r-1)**2)/(n-1)
+    kcorr = k - ((k-1)**2)/(n-1)
+    return np.sqrt(phi2corr / min( (kcorr-1), (rcorr-1)))
+
+

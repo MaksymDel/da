@@ -1,42 +1,7 @@
+import pickle
 from collections import defaultdict
 import torch
 import numpy as np
-    
-
-def masked_mean(
-    vector: torch.Tensor, mask: torch.BoolTensor, dim: int, keepdim: bool = False
-) -> torch.Tensor:
-    """
-    # taken from https://github.com/allenai/allennlp/blob/master/allennlp/nn/util.py
-
-    To calculate mean along certain dimensions on masked values
-    # Parameters
-    vector : `torch.Tensor`
-        The vector to calculate mean.
-    mask : `torch.BoolTensor`
-        The mask of the vector. It must be broadcastable with vector.
-    dim : `int`
-        The dimension to calculate mean
-    keepdim : `bool`
-        Whether to keep dimension
-    # Returns
-    `torch.Tensor`
-        A `torch.Tensor` of including the mean values.
-    """
-    def tiny_value_of_dtype(dtype: torch.dtype):
-        if not dtype.is_floating_point:
-            raise TypeError("Only supports floating point dtypes.")
-        if dtype == torch.float or dtype == torch.double:
-            return 1e-13
-        elif dtype == torch.half:
-            return 1e-4
-        else:
-            raise TypeError("Does not support dtype " + str(dtype))
-
-    replaced_vector = vector.masked_fill(~mask, 0.0)
-    value_sum = torch.sum(replaced_vector, dim=dim, keepdim=keepdim)
-    value_count = torch.sum(mask, dim=dim, keepdim=keepdim)
-    return value_sum / value_count.float().clamp(min=tiny_value_of_dtype(torch.float))
 
 
 def extract_sent_reps(src, tokenizer_hf, encoder_hf, layer_id):
@@ -137,3 +102,78 @@ def read_doc_indexed_data(split):
                 data_dict_raw[domain_name].append(l[:-1].split('\t')[1])
 
     return data_dict_raw, doc_ids
+
+
+def extract_reps_doc_sent(savedir, tokenizer_hf, encoder_hf, batch_size, layer_id):
+
+
+    # Sent embeddings
+    encoded_sent = {}
+    doc_ids = {}
+
+    for split in ['dev-cl', 'test-cl', 'train']:
+        print(split)
+        data_dict_raw, doc_ids[split] = read_doc_indexed_data(split)
+
+        encoded_sent[split] = extract_sent_reps_corpora(
+            data_dict_raw, 
+            tokenizer_hf, 
+            encoder_hf, 
+            layer_id=layer_id, 
+            batch_size=batch_size
+        )        
+
+        savefile = f"{savedir}/sent_means_{split}.pkl"
+        print(f"Saving to {savefile}")
+        with open(savefile, 'wb') as f:
+            pickle.dump(encoded_sent[split], f)
+        
+        print()
+
+    # Doc embeddings
+    encoded_doc = {}
+
+    for k, v in encoded_sent.items():
+        encoded_doc[k] = compute_doc_reps(encoded_sent[k], doc_ids[k])
+    
+    for split, v in encoded_doc.items():
+        savefile = f"{savedir}/doc_encoded_{split}.pkl"
+        print(f"Saving to {savefile}")
+        with open(savefile, 'wb') as f:
+            pickle.dump(v, f)
+
+
+def masked_mean(
+    vector: torch.Tensor, mask: torch.BoolTensor, dim: int, keepdim: bool = False
+) -> torch.Tensor:
+    """
+    # taken from https://github.com/allenai/allennlp/blob/master/allennlp/nn/util.py
+
+    To calculate mean along certain dimensions on masked values
+    # Parameters
+    vector : `torch.Tensor`
+        The vector to calculate mean.
+    mask : `torch.BoolTensor`
+        The mask of the vector. It must be broadcastable with vector.
+    dim : `int`
+        The dimension to calculate mean
+    keepdim : `bool`
+        Whether to keep dimension
+    # Returns
+    `torch.Tensor`
+        A `torch.Tensor` of including the mean values.
+    """
+    def tiny_value_of_dtype(dtype: torch.dtype):
+        if not dtype.is_floating_point:
+            raise TypeError("Only supports floating point dtypes.")
+        if dtype == torch.float or dtype == torch.double:
+            return 1e-13
+        elif dtype == torch.half:
+            return 1e-4
+        else:
+            raise TypeError("Does not support dtype " + str(dtype))
+
+    replaced_vector = vector.masked_fill(~mask, 0.0)
+    value_sum = torch.sum(replaced_vector, dim=dim, keepdim=keepdim)
+    value_count = torch.sum(mask, dim=dim, keepdim=keepdim)
+    return value_sum / value_count.float().clamp(min=tiny_value_of_dtype(torch.float))
