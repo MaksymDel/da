@@ -46,7 +46,9 @@ def extract_sent_reps(src, tokenizer_hf, encoder_hf, layer_id):
         padding="longest", 
         return_tensors="pt",
         return_token_type_ids=False,
-        return_attention_mask=True
+        return_attention_mask=True,
+        truncation=True,
+        max_length=100
     )
     # res
     for k, v in src.items():

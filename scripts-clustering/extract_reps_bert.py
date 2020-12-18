@@ -10,8 +10,8 @@ from transformers import AutoTokenizer, AutoModel
 from da.embed_utils import extract_sent_reps_corpora, compute_doc_reps, read_doc_indexed_data
 
 if __name__ == '__main__':
-    BATCH_SIZE = 256
-    LAYER_ID = -2 # layer 11
+    BATCH_SIZE = 256 # probably can do 512
+    LAYER_ID = -2 # corresponds to layer 11
 
     model_name  = 'xlm-roberta-base'    
     savedir = f"experiments/en_et_{model_name}/internals-docs"
