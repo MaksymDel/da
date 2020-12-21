@@ -11,11 +11,12 @@ if __name__ == '__main__':
 
     if exp == 'nmt':
         model_name  = 'concat60'
-        savedir = f"experiments/{src_lang}_{tgt_lang}_{model_name}/internals-docs"
+
     elif exp == 'bert':
         model_name  = 'xlm-roberta-base'
-        savedir = f"experiments/{src_lang}_{tgt_lang}_{model_name}/internals-docs"
+        
     else:
         raise ValueError("Wrong argument")
-
+    
+    savedir = f"experiments/{src_lang}_{tgt_lang}_{model_name}/internals-docs"
     train_kmeans_doc_sent(savedir)

@@ -42,7 +42,7 @@ def configure_bert(langpair):
     src_lang, tgt_lang = langpair.split("-")
 
     BATCH_SIZE = 512 # probably can do 512
-    LAYER_ID = -2 # corresponds to layer 11
+    LAYER_ID = 7
 
     model_name  = 'xlm-roberta-base'    
     savedir = f"experiments/{src_lang}_{tgt_lang}_{model_name}/internals-docs"
@@ -69,8 +69,10 @@ if __name__ == '__main__':
 
     if exp == 'nmt':
         args = configure_nmt(langpair) 
+
     elif exp == 'bert':
         args = configure_bert(langpair)
+
     else:
         raise ValueError("Wrong argument")
 
