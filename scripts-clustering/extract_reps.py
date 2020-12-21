@@ -28,7 +28,14 @@ def configure_nmt(langpair):
     encoder_hf = model_hf.base_model.encoder
     encoder_hf.device = model_hf.device
 
-    return {'savedir': savedir, 'tokenizer_hf': tokenizer_hf, 'encoder_hf': encoder_hf, 'layer_id': LAYER_ID, 'batch_size': BATCH_SIZE} 
+    return {
+            'savedir': savedir, 
+            'tokenizer_hf': tokenizer_hf, 
+            'encoder_hf': encoder_hf, 
+            'layer_id': LAYER_ID, 
+            'batch_size': BATCH_SIZE, 
+            'langpair': langpair
+            } 
 
 
 def configure_bert(langpair):
@@ -49,7 +56,14 @@ def configure_bert(langpair):
     model_hf = model_hf.cuda()
     encoder_hf = model_hf
 
-    return {'savedir': savedir, 'tokenizer_hf': tokenizer_hf, 'encoder_hf': encoder_hf, 'layer_id': LAYER_ID, 'batch_size': BATCH_SIZE} 
+    return {
+            'savedir': savedir, 
+            'tokenizer_hf': tokenizer_hf, 
+            'encoder_hf': encoder_hf, 
+            'layer_id': LAYER_ID, 
+            'batch_size': BATCH_SIZE, 
+            'langpair': langpair
+            } 
 
 
 if __name__ == '__main__':
