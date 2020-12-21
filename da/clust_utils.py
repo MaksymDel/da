@@ -49,6 +49,7 @@ def train_kmeans_doc_sent(savedir):
     # Train k-means on sentence embeddings
     sent_enc_path = f"{savedir}/sent_means_train.pkl"
 
+    print(f"Loading from {sent_enc_path}")
     with open(sent_enc_path, 'rb') as f:
         data_encoded = pickle.load(f)
         

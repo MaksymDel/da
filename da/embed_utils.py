@@ -105,8 +105,6 @@ def read_doc_indexed_data(split):
 
 
 def extract_reps_doc_sent(savedir, tokenizer_hf, encoder_hf, batch_size, layer_id):
-
-
     # Sent embeddings
     encoded_sent = {}
     doc_ids = {}

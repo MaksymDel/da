@@ -9,6 +9,7 @@ from da.fsmt.convert_fsmt_original_pytorch_checkpoint_to_pytorch import convert_
 from types import MethodType
 from da.greedy_search_interpret import greedy_search_interpret
 
+
 def test(save_dir):
     tokenizer_hf = FSMTTokenizer.from_pretrained(save_dir) #, spm_model=f"{save_dir}/spm_model.spm")
     model_hf = FSMTForConditionalGeneration.from_pretrained(save_dir)
@@ -39,23 +40,19 @@ def test(save_dir):
     assert list(res['encoder_hidden_states'][0].shape) == [1,5,512]
 
 
-def chkp60():
+def chkp60(langpair):
+    src_lang, tgt_lang = langpair.split("-")
     # chkp 60
-    exp_path = f"experiments/en_et_concat60"
+    exp_path = f"experiments/{src_lang}_{tgt_lang}_concat60"
     fseq_checkpoint_path = f"{exp_path}/checkpoint60.pt"
     save_dir = f"{exp_path}/hf"
-    data_path = f"experiments/bin-data-en-et-base"
+    data_path = f"experiments/bin-data-{src_lang}-{tgt_lang}-base"
     spm_model_file=None
 
-    convert_fsmt_checkpoint_to_pytorch(
-        fseq_checkpoint_path, 
-        save_dir, 
-        data_path, 
-        spm_model_file
-        )
-
-    # test
-    test(save_dir)
+    return {"fsmt_checkpoint_path": fseq_checkpoint_path,
+            "pytorch_dump_folder_path": save_dir, 
+            "data_path": data_path, 
+            "spm_model_path": spm_model_file}
 
 
 def chkp101():
@@ -66,14 +63,10 @@ def chkp101():
     data_path = f"experiments/bin-data-en-et-base"
     spm_model_file=None
 
-    convert_fsmt_checkpoint_to_pytorch(
-        fseq_checkpoint_path, 
-        save_dir, 
-        data_path, 
-        spm_model_file
-        )
-
-    test(save_dir)
+    return {"fsmt_checkpoint_path": fseq_checkpoint_path,
+            "pytorch_dump_folder_path": save_dir, 
+            "data_path": data_path, 
+            "spm_model_path": spm_model_file}
 
 
 def chkp1():
@@ -84,14 +77,10 @@ def chkp1():
     data_path = f"experiments/bin-data-en-et-base"
     spm_model_file=None
 
-    convert_fsmt_checkpoint_to_pytorch(
-        fseq_checkpoint_path, 
-        save_dir, 
-        data_path, 
-        spm_model_file
-        )
-
-    test(save_dir)
+    return {"fsmt_checkpoint_path": fseq_checkpoint_path,
+            "pytorch_dump_folder_path": save_dir, 
+            "data_path": data_path, 
+            "spm_model_path": spm_model_file}
 
 
 def chkp_tuned():
@@ -105,15 +94,18 @@ def chkp_tuned():
         data_path = f"experiments/bin-data-en-et-{main_name}-ft/"
         spm_model_file=None
         
-        convert_fsmt_checkpoint_to_pytorch(
-            fseq_checkpoint_path, 
-            save_dir, 
-            data_path, 
-            spm_model_file
-            )
-
-        test(save_dir)
+        return {"fsmt_checkpoint_path": fseq_checkpoint_path,
+                "pytorch_dump_folder_path": save_dir, 
+                "data_path": data_path, 
+                "spm_model_path": spm_model_file}
 
 
 if __name__ == '__main__':
-    chkp60()
+    langpair = sys.argv[1] # de-en
+    
+    #chkp60()
+    args = chkp60(langpair)
+    
+    convert_fsmt_checkpoint_to_pytorch(**args)
+
+    test(args['pytorch_dump_folder_path'])
