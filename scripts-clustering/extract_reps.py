@@ -9,7 +9,7 @@ from da.fsmt.tokenization_fsmt import FSMTTokenizer
 from da.embed_utils import extract_reps_doc_sent
 
 
-def configure_nmt(langpair):
+def configure_nmt(langpair, exp_type='multidomain'):
     print("Configuring NMT")
     src_lang, tgt_lang = langpair.split("-")
 
@@ -27,17 +27,25 @@ def configure_nmt(langpair):
     encoder_hf = model_hf.base_model.encoder
     encoder_hf.device = model_hf.device
 
+    if exp_type == 'multidomain':
+        domain_names = ["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
+    elif exp_type == 'paracrawl':
+        domain_names = ["base"]
+    else:
+        raise ValueError(f"{exp_type} is not correct")
+        
     return {
             'savedir': savedir, 
             'tokenizer_hf': tokenizer_hf, 
             'encoder_hf': encoder_hf, 
             'layer_id': LAYER_ID, 
             'batch_size': BATCH_SIZE, 
-            'langpair': langpair
+            'langpair': langpair,
+            'domain_names': domain_names
             } 
 
 
-def configure_bert(langpair):
+def configure_bert(langpair, exp_type='multidomain'):
     print("Configuring BERT")
     src_lang, tgt_lang = langpair.split("-")
 
@@ -53,25 +61,34 @@ def configure_bert(langpair):
     model_hf = model_hf.cuda()
     encoder_hf = model_hf
 
+    if exp_type == 'multidomain':
+        domain_names = ["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
+    elif exp_type == 'paracrawl':
+        domain_names = ["base"]
+    else:
+        raise ValueError(f"{exp_type} is not correct")
+        
     return {
             'savedir': savedir, 
             'tokenizer_hf': tokenizer_hf, 
             'encoder_hf': encoder_hf, 
             'layer_id': LAYER_ID, 
             'batch_size': BATCH_SIZE, 
-            'langpair': langpair
-            } 
+            'langpair': langpair,
+            'domain_names': domain_names
+            }
 
 
 if __name__ == '__main__':
-    exp = sys.argv[1]
-    langpair = sys.argv[2]
+    exp = sys.argv[1] # nmt / bert
+    langpair = sys.argv[2] # en-et / de-en
+    exp_type = sys.argv[3] # multidomain / paracrawl
 
     if exp == 'nmt':
-        args = configure_nmt(langpair) 
+        args = configure_nmt(langpair, exp_type) 
 
     elif exp == 'bert':
-        args = configure_bert(langpair)
+        args = configure_bert(langpair, exp_type)
 
     else:
         raise ValueError("Wrong argument")

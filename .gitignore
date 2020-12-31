@@ -4,7 +4,7 @@ fairseq
 transformers
 data-prep
 log-tb
-experiments
+experiments*
 .vscode
 __pycache__/
 *.pyc

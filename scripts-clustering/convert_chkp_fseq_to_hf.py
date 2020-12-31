@@ -40,6 +40,21 @@ def test(save_dir):
     assert list(res['encoder_hidden_states'][0].shape) == [1,5,512]
 
 
+# def chkp60_para(langpair):
+#     src_lang, tgt_lang = langpair.split("-")
+#     # chkp 60
+#     exp_path = f"experiments/{src_lang}_{tgt_lang}_paracrawl"
+#     fseq_checkpoint_path = f"{exp_path}/checkpoint60.pt"
+#     save_dir = f"{exp_path}/hf"
+#     data_path = f"{exp_path}/data-fseq-bin"
+#     spm_model_file=None
+
+#     return {"fsmt_checkpoint_path": fseq_checkpoint_path,
+#             "pytorch_dump_folder_path": save_dir, 
+#             "data_path": data_path, 
+#             "spm_model_path": spm_model_file}
+
+
 def chkp60(langpair):
     src_lang, tgt_lang = langpair.split("-")
     # chkp 60
@@ -105,6 +120,7 @@ if __name__ == '__main__':
     
     #chkp60()
     args = chkp60(langpair)
+    #args = chkp60_para(langpair)
     
     convert_fsmt_checkpoint_to_pytorch(**args)
 

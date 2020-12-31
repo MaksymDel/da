@@ -89,13 +89,16 @@ def compute_doc_reps(data_encoded, doc_ids):
     return res_dict
 
 
-def read_doc_indexed_data(split, langpair):
+def read_doc_indexed_data(
+                        split, 
+                        langpair,
+                        domain_names=["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
+                        ):
     src_lang, tgt_lang = langpair.split("-")
 
     data_dict_raw = defaultdict(list)
     doc_ids = defaultdict(list)
 
-    domain_names = ["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
     for domain_name in domain_names:
         fn = f"experiments/doc-indices/sp-cl-{domain_name}.{src_lang}-{tgt_lang}.docs.{split}.both"
         with open(fn) as f:
@@ -106,14 +109,21 @@ def read_doc_indexed_data(split, langpair):
     return data_dict_raw, doc_ids
 
 
-def extract_reps_doc_sent(savedir, tokenizer_hf, encoder_hf, batch_size, layer_id, langpair):
+def extract_reps_doc_sent(
+                        savedir,tokenizer_hf, 
+                        encoder_hf, 
+                        batch_size, 
+                        layer_id, 
+                        langpair, 
+                        domain_names=["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
+                        ):
     # Sent embeddings
     encoded_sent = {}
     doc_ids = {}
 
-    for split in ['dev-cl', 'test-cl', 'train']:
+    for split in ['dev', 'test', 'train']:
         print(split)
-        data_dict_raw, doc_ids[split] = read_doc_indexed_data(split, langpair)
+        data_dict_raw, doc_ids[split] = read_doc_indexed_data(split, langpair, domain_names)
 
         encoded_sent[split] = extract_sent_reps_corpora(
             data_dict_raw, 
