@@ -46,7 +46,7 @@ def predict_class_labels(exp, langpair):
         if not os.path.isdir(savedir):
             os.mkdir(savedir)
 
-        for split in ['train', 'dev-cl', 'test-cl']:
+        for split in ['train', 'dev', 'test']:
             print(split)
             print("###")
             
