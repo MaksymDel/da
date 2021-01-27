@@ -113,6 +113,7 @@ def read_doc_indexed_data(
         else:
             raise ValueError(f"wrong domain name: {domain_name}")
         
+        print(f"Loading {fn}")
         with open(fn) as f:
             for l in f.readlines():
                 doc_ids[domain_name].append(l[:-1].split('\t')[0])
