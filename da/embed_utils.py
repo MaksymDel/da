@@ -63,29 +63,34 @@ def compute_doc_reps(data_encoded, doc_ids):
     for d, v in data_encoded.items():
         all_encoded.extend(data_encoded[d])
         all_ids.extend(doc_ids[d])
+    print('a')
 
-    all_encoded = np.array(all_encoded)
-    all_ids = np.array(all_ids)
+    #all_encoded = np.array(all_encoded)
+    #all_ids = np.array(all_ids)
+    #print('b')
     
     ids_to_reps = defaultdict(list)
     for id, rep in zip(all_ids, all_encoded):
         ids_to_reps[id].append(rep)
+    print('c')
     
+    del all_encoded
 
     for k, v in ids_to_reps.items():
         ids_to_reps[k] = np.array(v).mean(0)
+    print('d')
     
     doc_embedded_corpus = []
     for id in all_ids:
         doc_embedded_corpus.append(ids_to_reps[id])
-    
-    res_dict = {}
-    
+    print('e')
+
+    res_dict = {}    
     i = 0
     for d, v in data_encoded.items():
         res_dict[d] = doc_embedded_corpus[i:i+len(v)]
         i += len(v)
-
+    print('f')
     return res_dict
 
 
@@ -107,6 +112,46 @@ def read_doc_indexed_data(
                 data_dict_raw[domain_name].append(l[:-1].split('\t')[1])
 
     return data_dict_raw, doc_ids
+
+
+
+def extract_reps_doc_given_sent(
+                        savedir,tokenizer_hf, 
+                        encoder_hf, 
+                        batch_size, 
+                        layer_id, 
+                        langpair, 
+                        domain_names=["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
+                        ):
+    # Sent embeddings
+    encoded_sent = {}
+    doc_ids = {}
+
+    for split in ['dev', 'test', 'train']:
+        print(split)
+        _, doc_ids[split] = read_doc_indexed_data(split, langpair, domain_names)
+        del _
+
+        savefile = f"{savedir}/sent_means_{split}.pkl"
+        print(f"Loading from {savefile}")
+        with open(savefile, 'rb') as f:
+            encoded_sent[split] = pickle.load(f)
+        
+        print("Loaded")
+        print()
+
+    # Doc embeddings
+    encoded_doc = {}
+
+    for k, v in encoded_sent.items():
+        encoded_doc[k] = compute_doc_reps(encoded_sent[k], doc_ids[k])
+    
+    for split, v in encoded_doc.items():
+        savefile = f"{savedir}/doc_encoded_{split}.pkl"
+        print(f"Saving to {savefile}")
+        with open(savefile, 'wb') as f:
+            pickle.dump(v, f)
+
 
 
 def extract_reps_doc_sent(

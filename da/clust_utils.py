@@ -24,10 +24,11 @@ def flatten_dict(dct):
 
 def kmeans_train(data_encoded, num_clusters):
 
+    print("start flattenning")
     all_encoded, _ = flatten_dict(data_encoded)  
-
-    kmeans = KMeans(n_clusters=num_clusters, random_state=0, n_init=10).fit(all_encoded) # 5 for original results
-
+    print("start clustering")
+    kmeans = KMeans(n_clusters=num_clusters, random_state=0, n_init=10, verbose=55).fit(all_encoded) # 5 for original results
+    print("finished")
     return kmeans
 
 

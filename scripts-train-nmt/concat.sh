@@ -22,6 +22,8 @@
 
 #SBATCH --exclude=falcon3
 
+# srun -p gpu --gres gpu:tesla:1 -t 192:00:00 --exclude falcon5,falcon1,falcon2,falcon3 --pty bash
+
 module load python/3.6.3/CUDA
 
 source activate da
