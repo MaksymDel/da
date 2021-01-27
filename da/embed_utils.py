@@ -109,8 +109,8 @@ def read_doc_indexed_data(
         if exp == "nmt": # with sp
             fn = f"experiments/doc-indices/sp-cl-{domain_name}.{src_lang}-{tgt_lang}.docs.{split}.both"
         elif exp == "bert":
-            fn = f"experiments/doc-indices/cl-{domain_name}.{src_lang}-{tgt_lang}.docs.{split}.both"
-        else
+            fn = f"experiments/doc-indices/cl-{domain_name}.{src_lang}-{tgt_lang}.docs.{split}"
+        else:
             raise ValueError(f"wrong domain name: {domain_name}")
         
         with open(fn) as f:
