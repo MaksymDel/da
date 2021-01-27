@@ -23,14 +23,14 @@ def configure_nmt(langpair, exp_type='multidomain'):
 
     tokenizer_hf = FSMTTokenizer.from_pretrained(hf_dir)
     model_hf = FSMTForConditionalGeneration.from_pretrained(hf_dir)
-    #model_hf = model_hf.cuda()
+    model_hf = model_hf.cuda()
     encoder_hf = model_hf.base_model.encoder
     encoder_hf.device = model_hf.device
 
     if exp_type == 'multidomain':
         domain_names = ["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
     elif exp_type == 'paracrawl':
-        domain_names = ["base"]
+        domain_names = ["ParaCrawl"]
     else:
         raise ValueError(f"{exp_type} is not correct")
         
@@ -41,6 +41,7 @@ def configure_nmt(langpair, exp_type='multidomain'):
             'layer_id': LAYER_ID, 
             'batch_size': BATCH_SIZE, 
             'langpair': langpair,
+            'exp': 'nmt',
             'domain_names': domain_names
             } 
 
@@ -58,13 +59,13 @@ def configure_bert(langpair, exp_type='multidomain'):
 
     model_hf = AutoModel.from_pretrained(model_name)
     tokenizer_hf = AutoTokenizer.from_pretrained(model_name)
-    #model_hf = model_hf.cuda()
+    model_hf = model_hf.cuda()
     encoder_hf = model_hf
 
     if exp_type == 'multidomain':
         domain_names = ["Europarl", "OpenSubtitles", "JRC-Acquis", "EMEA"]
     elif exp_type == 'paracrawl':
-        domain_names = ["base"]
+        domain_names = ["ParaCrawl"]
     else:
         raise ValueError(f"{exp_type} is not correct")
         
@@ -75,6 +76,7 @@ def configure_bert(langpair, exp_type='multidomain'):
             'layer_id': LAYER_ID, 
             'batch_size': BATCH_SIZE, 
             'langpair': langpair,
+            'exp': 'bert',
             'domain_names': domain_names
             }
 
@@ -93,5 +95,5 @@ if __name__ == '__main__':
     else:
         raise ValueError("Wrong argument")
 
-    #extract_reps_doc_sent(**args)
-    extract_reps_doc_given_sent(**args)
+    extract_reps_doc_sent(**args)
+    #extract_reps_doc_given_sent(**args)
