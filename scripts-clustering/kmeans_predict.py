@@ -11,9 +11,7 @@ from da.clust_utils import cramers_corrected_stat, kmeans_predict
 np.random.seed(21)
 
 # NMT sent clusters
-def predict_class_labels(exp, langpair):
-
-    NUM_CLUSTERS=4
+def predict_class_labels(exp, langpair, NUM_CLUSTERS):
 
     if exp == 'nmt':
         model_name  = 'concat60'
@@ -48,7 +46,7 @@ def predict_class_labels(exp, langpair):
             kmeans = pickle.load(f)
         
         if not os.path.isdir(savedir):
-            os.mkdir(savedir)
+            os.makedirs(savedir)
 
         for split in ['train', 'dev', 'test']:
             print(split)
@@ -98,4 +96,5 @@ if __name__ == '__main__':
     langpair = sys.argv[2]
     src_lang, tgt_lang = langpair.split("-")
     
-    predict_class_labels(exp, langpair)
+    NUM_CLUSTERS=3
+    predict_class_labels(exp, langpair, NUM_CLUSTERS)

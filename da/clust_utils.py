@@ -44,7 +44,7 @@ def kmeans_predict(kmeans_model, data_encoded, train=False):
     return labels_hat, labels_true
 
 
-def train_kmeans_doc_sent(savedir):
+def train_kmeans_doc_sent(savedir, NUM_CLUSTERS):
     np.random.seed(21)
 
     # Train k-means on sentence embeddings
@@ -54,7 +54,6 @@ def train_kmeans_doc_sent(savedir):
     with open(sent_enc_path, 'rb') as f:
         data_encoded = pickle.load(f)
         
-    NUM_CLUSTERS=4
 
     kmeans_sent = kmeans_train(data_encoded, NUM_CLUSTERS)
 
