@@ -20,6 +20,6 @@ if __name__ == '__main__':
     
     savedir = f"experiments/{src_lang}_{tgt_lang}_{model_name}/internals-docs"
     
-    NUM_CLUSTERS=5
+    NUM_CLUSTERS=4
     train_kmeans_doc_sent(savedir, NUM_CLUSTERS)
     # train_kmeans_doc_only(savedir, NUM_CLUSTERS)

@@ -96,5 +96,5 @@ if __name__ == '__main__':
     langpair = sys.argv[2]
     src_lang, tgt_lang = langpair.split("-")
     
-    NUM_CLUSTERS=3
+    NUM_CLUSTERS=4
     predict_class_labels(exp, langpair, NUM_CLUSTERS)
