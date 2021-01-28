@@ -61,7 +61,7 @@ def train_kmeans_doc_sent(savedir):
     if not os.path.isdir(savedir):
         os.mkdir(savedir)
 
-    fn = f"{savedir}/kmeans_train_sent.pkl"
+    fn = f"{savedir}/kmeans_train_sent_{NUM_CLUSTERS}.pkl"
     print(f"Saving to {fn}")
     with open(fn, 'wb') as f:
         pickle.dump(kmeans_sent, f)
@@ -80,7 +80,7 @@ def train_kmeans_doc_sent(savedir):
     if not os.path.isdir(savedir):
         os.mkdir(savedir)
 
-    fn = f"{savedir}/kmeans_train_doc.pkl"
+    fn = f"{savedir}/kmeans_train_doc_{NUM_CLUSTERS}.pkl"
     print(f"Saving to {fn}")
     with open(fn, 'wb') as f:
         pickle.dump(kmeans_docs, f)

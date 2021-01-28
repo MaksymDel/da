@@ -193,7 +193,7 @@ def extract_reps_doc_sent(
         with open(savefile, 'wb') as f:
             pickle.dump(encoded_sent[split], f)
         
-        print()
+        print("saved")
 
     # Doc embeddings
     encoded_doc = {}
@@ -206,6 +206,9 @@ def extract_reps_doc_sent(
         print(f"Saving to {savefile}")
         with open(savefile, 'wb') as f:
             pickle.dump(v, f)
+        
+        print("saved")
+
 
 
 def masked_mean(

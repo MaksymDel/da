@@ -13,6 +13,7 @@ Dir stucture:
 conda create -n da python=3.8
 conda activate da
 conda install pytorch torchvision torchaudio cudatoolkit=10.1 -c pytorch
+pip install scipy numpy pandas transformers==4.0 sentencepiece tensorboardX
 
 git clone https://github.com/maksym-del/da
 cd da

@@ -12,6 +12,9 @@ np.random.seed(21)
 
 # NMT sent clusters
 def predict_class_labels(exp, langpair):
+
+    NUM_CLUSTERS=4
+
     if exp == 'nmt':
         model_name  = 'concat60'
 
@@ -28,14 +31,15 @@ def predict_class_labels(exp, langpair):
 
         model_dir = f"experiments/{src_lang}_{tgt_lang}_{model_name}"
         internals_dir = f"{model_dir}/internals-docs"
+        clusters_dir = f"{model_dir}/clustering_data"
 
         if clustering_type == "sent":
-            kmeans_model_file = f"{internals_dir}/kmeans_train_sent.pkl"
-            savedir = f"{model_dir}/{exp}-clusters-sent"
+            kmeans_model_file = f"{internals_dir}/kmeans_train_sent_{NUM_CLUSTERS}.pkl"
+            savedir = f"{clusters_dir}/{NUM_CLUSTERS}/{exp}-clusters-sent"
 
         elif clustering_type == "doc":
-            kmeans_model_file = f"{internals_dir}/kmeans_train_doc.pkl"
-            savedir = f"{model_dir}/{exp}-clusters-doc"
+            kmeans_model_file = f"{internals_dir}/kmeans_train_doc_{NUM_CLUSTERS}.pkl"
+            savedir = f"{clusters_dir}/{NUM_CLUSTERS}/{exp}-clusters-doc"
 
         else:
             raise ValueError(f"{clustering_type} is not known")
