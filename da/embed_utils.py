@@ -63,7 +63,6 @@ def compute_doc_reps(data_encoded, doc_ids):
     for d, v in data_encoded.items():
         all_encoded.extend(data_encoded[d])
         all_ids.extend(doc_ids[d])
-    print('a')
 
     #all_encoded = np.array(all_encoded)
     #all_ids = np.array(all_ids)
@@ -72,26 +71,23 @@ def compute_doc_reps(data_encoded, doc_ids):
     ids_to_reps = defaultdict(list)
     for id, rep in zip(all_ids, all_encoded):
         ids_to_reps[id].append(rep)
-    print('c')
     
     del all_encoded
 
     for k, v in ids_to_reps.items():
-        ids_to_reps[k] = np.array(v).mean(0)
-    print('d')
-    
-    doc_embedded_corpus = []
-    for id in all_ids:
-        doc_embedded_corpus.append(ids_to_reps[id])
-    print('e')
+        ids_to_reps[k] = np.array(v).mean(0)    
 
-    res_dict = {}    
-    i = 0
-    for d, v in data_encoded.items():
-        res_dict[d] = doc_embedded_corpus[i:i+len(v)]
-        i += len(v)
-    print('f')
-    return res_dict
+    return ids_to_reps
+    # doc_embedded_corpus = []
+    # for id in all_ids:
+    #     doc_embedded_corpus.append(ids_to_reps[id])
+
+    # res_dict = {}    
+    # i = 0
+    # for d, v in data_encoded.items():
+    #     res_dict[d] = doc_embedded_corpus[i:i+len(v)]
+    #     i += len(v)
+    # return res_dict
 
 
 def read_doc_indexed_data(
@@ -152,18 +148,18 @@ def extract_reps_doc_given_sent(
     # Doc embeddings
     encoded_doc = {}
 
-    for k, v in encoded_sent.items():
-        encoded_doc[k] = compute_doc_reps(encoded_sent[k], doc_ids[k])
+    for split, v in encoded_sent.items():
+        encoded_doc[k] = compute_doc_reps(encoded_sent[split], doc_ids[split])
     
     for split, v in encoded_doc.items():
-        savefile = f"{savedir}/doc_encoded_{split}.pkl"
+        savefile = f"{savedir}/ids2doc-reps_{split}.pkl"
         print(f"Saving to {savefile}")
         with open(savefile, 'wb') as f:
             pickle.dump(v, f)
 
 
 
-def extract_reps_doc_sent(
+def extract_reps_sent(
                         savedir,tokenizer_hf, 
                         encoder_hf, 
                         batch_size, 
@@ -195,19 +191,19 @@ def extract_reps_doc_sent(
         
         print("saved")
 
-    # Doc embeddings
-    encoded_doc = {}
+    # # Doc embeddings
+    # encoded_doc = {}
 
-    for k, v in encoded_sent.items():
-        encoded_doc[k] = compute_doc_reps(encoded_sent[k], doc_ids[k])
+    # for k, v in encoded_sent.items():
+    #     encoded_doc[k] = compute_doc_reps(encoded_sent[k], doc_ids[k])
     
-    for split, v in encoded_doc.items():
-        savefile = f"{savedir}/doc_encoded_{split}.pkl"
-        print(f"Saving to {savefile}")
-        with open(savefile, 'wb') as f:
-            pickle.dump(v, f)
+    # for split, v in encoded_doc.items():
+    #     savefile = f"{savedir}/doc_encoded_{split}.pkl"
+    #     print(f"Saving to {savefile}")
+    #     with open(savefile, 'wb') as f:
+    #         pickle.dump(v, f)
         
-        print("saved")
+    #     print("saved")
 
 
 

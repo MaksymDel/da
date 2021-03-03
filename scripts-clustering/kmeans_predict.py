@@ -22,7 +22,9 @@ def predict_class_labels(exp, langpair, NUM_CLUSTERS):
     else:
         raise ValueError("{exp} is a wrong argument")
 
-    for clustering_type in ["sent", "doc"]:
+    #for clustering_type in ["sent", "doc"]:
+    for clustering_type in ["doc"]:
+
         print(clustering_type)
 
         src_lang, tgt_lang = langpair.split('-') 
