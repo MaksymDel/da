@@ -95,5 +95,5 @@ if __name__ == '__main__':
     else:
         raise ValueError("Wrong argument")
 
-    extract_reps_doc_sent(**args)
-    #extract_reps_doc_given_sent(**args)
+    #extract_reps_doc_sent(**args)
+    extract_reps_doc_given_sent(**args)

@@ -67,7 +67,7 @@ def train_kmeans_doc_sent(savedir, NUM_CLUSTERS):
 
 
     # Train k-means on document embeddings
-    doc_enc_path = f"{savedir}/doc_encoded_train.pkl"
+    doc_enc_path = f"{savedir}/doc_means_train.pkl"
 
     with open(doc_enc_path, 'rb') as f:
         data_encoded = pickle.load(f)
@@ -88,7 +88,7 @@ def train_kmeans_doc_only(savedir, NUM_CLUSTERS):
     np.random.seed(21)
 
     # Train k-means on document embeddings
-    doc_enc_path = f"{savedir}/doc_encoded_train.pkl"
+    doc_enc_path = f"{savedir}/doc_means_train.pkl"
 
     with open(doc_enc_path, 'rb') as f:
         data_encoded = pickle.load(f)

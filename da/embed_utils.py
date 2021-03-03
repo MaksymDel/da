@@ -55,7 +55,7 @@ def extract_sent_reps_corpora(data_dict_raw, tokenizer_hf, encoder_hf, layer_id,
     return data_dict_encoded
 
 
-def compute_doc_reps(data_encoded, doc_ids):
+def compute_doc_reps_weighted(data_encoded, doc_ids):
 
     all_encoded = []
     all_ids = []
@@ -63,7 +63,6 @@ def compute_doc_reps(data_encoded, doc_ids):
     for d, v in data_encoded.items():
         all_encoded.extend(data_encoded[d])
         all_ids.extend(doc_ids[d])
-    print('a')
 
     #all_encoded = np.array(all_encoded)
     #all_ids = np.array(all_ids)
@@ -72,26 +71,54 @@ def compute_doc_reps(data_encoded, doc_ids):
     ids_to_reps = defaultdict(list)
     for id, rep in zip(all_ids, all_encoded):
         ids_to_reps[id].append(rep)
-    print('c')
     
     del all_encoded
 
     for k, v in ids_to_reps.items():
         ids_to_reps[k] = np.array(v).mean(0)
-    print('d')
     
     doc_embedded_corpus = []
     for id in all_ids:
         doc_embedded_corpus.append(ids_to_reps[id])
-    print('e')
 
     res_dict = {}    
     i = 0
     for d, v in data_encoded.items():
         res_dict[d] = doc_embedded_corpus[i:i+len(v)]
         i += len(v)
-    print('f')
     return res_dict
+
+
+def compute_doc_reps_unweighted(data_encoded, doc_ids):
+
+    if len(list(data_encoded.keys())) != 1:
+        raise NotImplementedError("Does not implemented for multidomain")
+
+    all_encoded = []
+    all_ids = []
+
+    for d, v in data_encoded.items():
+        all_encoded.extend(data_encoded[d])
+        all_ids.extend(doc_ids[d])
+
+    #all_encoded = np.array(all_encoded)
+    #all_ids = np.array(all_ids)
+    #print('b')
+    
+    ids_to_reps = defaultdict(list)
+    for id, rep in zip(all_ids, all_encoded):
+        ids_to_reps[id].append(rep)
+    
+    del all_encoded
+
+    for k, v in ids_to_reps.items():
+        ids_to_reps[k] = np.array(v).mean(0)
+    
+    res_dict = {}
+    res_dict[list(data_encoded.keys())[0]] = list(ids_to_reps.values())
+
+    return res_dict, list(ids_to_reps.keys())
+
 
 
 def read_doc_indexed_data(
@@ -116,15 +143,16 @@ def read_doc_indexed_data(
         print(f"Loading {fn}")
         with open(fn) as f:
             for l in f.readlines():
-                doc_ids[domain_name].append(l[:-1].split('\t')[0])
-                data_dict_raw[domain_name].append(l[:-1].split('\t')[1])
+                doc_ids[domain_name].append(l.rstrip().split('\t')[0])
+                data_dict_raw[domain_name].append(l.rstrip().split('\t')[1])
 
     return data_dict_raw, doc_ids
 
 
 
 def extract_reps_doc_given_sent(
-                        savedir,tokenizer_hf, 
+                        savedir,
+                        tokenizer_hf, 
                         encoder_hf, 
                         batch_size, 
                         layer_id, 
@@ -151,12 +179,19 @@ def extract_reps_doc_given_sent(
 
     # Doc embeddings
     encoded_doc = {}
+    docids = {}
 
-    for k, v in encoded_sent.items():
-        encoded_doc[k] = compute_doc_reps(encoded_sent[k], doc_ids[k])
-    
+    for split, v in encoded_sent.items():
+        encoded_doc[split], docids[split] = compute_doc_reps_unweighted(encoded_sent[split], doc_ids[split])
+
     for split, v in encoded_doc.items():
-        savefile = f"{savedir}/doc_encoded_{split}.pkl"
+        savefile = f"{savedir}/doc_means_{split}.pkl"
+        print(f"Saving to {savefile}")
+        with open(savefile, 'wb') as f:
+            pickle.dump(v, f)
+
+    for split, v in docids.items():
+        savefile = f"{savedir}/docids_{split}.pkl"
         print(f"Saving to {savefile}")
         with open(savefile, 'wb') as f:
             pickle.dump(v, f)
@@ -164,7 +199,8 @@ def extract_reps_doc_given_sent(
 
 
 def extract_reps_doc_sent(
-                        savedir,tokenizer_hf, 
+                        savedir,
+                        tokenizer_hf, 
                         encoder_hf, 
                         batch_size, 
                         layer_id, 
