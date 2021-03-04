@@ -1,5 +1,3 @@
-
-
 import os
 import pickle
 import numpy as np
@@ -44,7 +42,7 @@ def kmeans_predict(kmeans_model, data_encoded, train=False):
     return labels_hat, labels_true
 
 
-def train_kmeans_doc_sent(savedir, NUM_CLUSTERS):
+def train_kmeans_sent(savedir, NUM_CLUSTERS):
     np.random.seed(21)
 
     # Train k-means on sentence embeddings
@@ -66,25 +64,10 @@ def train_kmeans_doc_sent(savedir, NUM_CLUSTERS):
         pickle.dump(kmeans_sent, f)
 
 
-    # Train k-means on document embeddings
-    doc_enc_path = f"{savedir}/doc_means_train.pkl"
-
-    with open(doc_enc_path, 'rb') as f:
-        data_encoded = pickle.load(f)
-        
-
-    kmeans_docs = kmeans_train(data_encoded, NUM_CLUSTERS)
-
-    if not os.path.isdir(savedir):
-        os.mkdir(savedir)
-
-    fn = f"{savedir}/kmeans_train_doc_{NUM_CLUSTERS}.pkl"
-    print(f"Saving to {fn}")
-    with open(fn, 'wb') as f:
-        pickle.dump(kmeans_docs, f)
 
 
-def train_kmeans_doc_only(savedir, NUM_CLUSTERS):
+
+def train_kmeans_doc(savedir, NUM_CLUSTERS):
     np.random.seed(21)
 
     # Train k-means on document embeddings
@@ -99,7 +82,7 @@ def train_kmeans_doc_only(savedir, NUM_CLUSTERS):
     if not os.path.isdir(savedir):
         os.mkdir(savedir)
 
-    fn = f"{savedir}/kmeans_train_doc_{NUM_CLUSTERS}.pkl"
+    fn = f"{savedir}/new_kmeans_train_doc_{NUM_CLUSTERS}.pkl"
     print(f"Saving to {fn}")
     with open(fn, 'wb') as f:
         pickle.dump(kmeans_docs, f)
@@ -117,6 +100,7 @@ def cramers_corrected_stat(confusion_matrix):
     phi2corr = max(0, phi2 - ((k-1)*(r-1))/(n-1))    
     rcorr = r - ((r-1)**2)/(n-1)
     kcorr = k - ((k-1)**2)/(n-1)
+    print(kcorr, rcorr, phi2corr)
     return np.sqrt(phi2corr / min( (kcorr-1), (rcorr-1)))
 
 

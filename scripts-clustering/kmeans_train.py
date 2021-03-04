@@ -2,7 +2,7 @@ import sys
 
 sys.path.append('.')
 
-from da.clust_utils import train_kmeans_doc_sent, train_kmeans_doc_only
+from da.clust_utils import train_kmeans_sent, train_kmeans_doc
 
 if __name__ == '__main__':
     exp = sys.argv[1]
@@ -20,6 +20,6 @@ if __name__ == '__main__':
     
     savedir = f"experiments/{src_lang}_{tgt_lang}_{model_name}/internals-docs"
     
-    NUM_CLUSTERS=4
-    # train_kmeans_doc_sent(savedir, NUM_CLUSTERS)
-    train_kmeans_doc_only(savedir, NUM_CLUSTERS)
+    NUM_CLUSTERS=3
+    #train_kmeans_sent(savedir, NUM_CLUSTERS)
+    train_kmeans_doc(savedir, NUM_CLUSTERS)
