@@ -9,6 +9,7 @@ if __name__ == '__main__':
     langpair = sys.argv[2]
     src_lang, tgt_lang = langpair.split("-")
     sent_or_doc = sys.argv[3]
+    NUM_CLUSTERS = int(sys.argv[4])
 
     if exp == 'nmt':
         model_name  = 'concat60'
@@ -21,8 +22,6 @@ if __name__ == '__main__':
     
     savedir = f"experiments/{src_lang}_{tgt_lang}_{model_name}/internals-docs"
     
-    NUM_CLUSTERS=12
-
     if sent_or_doc == "sent":
         train_kmeans_sent(savedir, NUM_CLUSTERS)
     elif sent_or_doc == "doc":

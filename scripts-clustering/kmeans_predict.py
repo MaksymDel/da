@@ -35,7 +35,7 @@ def predict_class_labels_sent(exp, langpair, NUM_CLUSTERS):
 
         if clustering_type == "sent":
             kmeans_model_file = f"{internals_dir}/kmeans_train_sent_{NUM_CLUSTERS}.pkl"
-            savedir = f"{clusters_dir}/{NUM_CLUSTERS}/{exp}-clusters-sent"
+            savedir = f"{clusters_dir}/{NUM_CLUSTERS}_new/{exp}-clusters-sent"
 
         elif clustering_type == "doc":
             kmeans_model_file = f"{internals_dir}/kmeans_train_doc_{NUM_CLUSTERS}.pkl"
@@ -166,11 +166,10 @@ if __name__ == '__main__':
     exp = sys.argv[1]
     langpair = sys.argv[2]
     sent_or_doc = sys.argv[3]
+    NUM_CLUSTERS = int(sys.argv[4])
 
     src_lang, tgt_lang = langpair.split("-")
     
-    NUM_CLUSTERS=3
-
     if sent_or_doc == "sent":
         predict_class_labels_sent(exp, langpair, NUM_CLUSTERS)
     elif sent_or_doc == "doc":
