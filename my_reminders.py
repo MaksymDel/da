@@ -13,3 +13,4 @@
 # da3: python scripts-clustering/kmeans_predict.py bert de-en sent 12
 # da4: python scripts-clustering/kmeans_predict.py bert de-en doc 12
 
+# fairseq-generate data-bin/ --path chkp/checkpoint60.pt --sacrebleu --quiet --gen-subset valid
