@@ -95,11 +95,7 @@ def extract_reps_doc(
                         filename_data_doc_indexed,
                         filename_sent_means,
                         filename_savefile_doc_means,
-                        filename_savefile_doc_ids,
-                        tokenizer_hf, 
-                        encoder_hf, 
-                        batch_size, 
-                        layer_id, 
+                        filename_savefile_doc_ids
                         ):
 
     # Just load Sent embeddings
