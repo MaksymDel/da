@@ -1,5 +1,5 @@
 # DA
-
+# note: to use multidomain kmeans models you need scikit-learn==0.22.2.post1
 Dir stucture:
 ```
 * faieseq (clonned fairseq repo)

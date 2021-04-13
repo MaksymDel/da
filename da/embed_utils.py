@@ -8,13 +8,13 @@ import numpy as np
 def read_doc_indexed_data(filename_data_doc_indexed):
     print(f"Loading from {filename_data_doc_indexed}")
 
-    data_dict_raw = []
+    data_raw = []
     doc_ids = []
 
-    with open(filename_data_doc_indexed) as f:
+    with open(filename_data_doc_indexed, "r") as f:
         for l in f.readlines():
             doc_ids.append(l.rstrip().split('\t')[0])
-            data_dict_raw.append(l.rstrip().split('\t')[1])
+            data_raw.append(l.rstrip().split('\t')[1])
 
     print("Loaded")
     return data_raw, doc_ids
@@ -68,8 +68,10 @@ def extract_reps_sent(
     print("Extracting reps...")
     it = 0
     for i in range(0, len(data), batch_size):
-        if it % 100 == 0:
-            print(it)
+        # if it % 100 == 0:
+        #     print(it)
+        print(it)
+
         batch = data[i:i+batch_size]
         encoded_sent.extend(extract_reps_sent_batch(batch, tokenizer_hf, encoder_hf, layer_id))
         it += 1
@@ -104,7 +106,7 @@ def extract_reps_doc(
 
     _, doc_ids = read_doc_indexed_data(filename_data_doc_indexed)
     del _
-    encoded_sent = pickle_load_from_file(filename_data_doc_indexed)
+    encoded_sent = pickle_load_from_file(filename_sent_means)
 
     # Compute doc embeddings
     encoded_doc, docids = compute_doc_reps(encoded_sent, doc_ids)
@@ -158,7 +160,7 @@ def pickle_dump_to_file(obj, fn):
 
 def pickle_load_from_file(fn):
     print(f"Loading from {fn}")
-    with open(fn, 'wb') as f:
+    with open(fn, 'rb') as f:
         obj = pickle.load(f)
     print("Loaded")
     return obj

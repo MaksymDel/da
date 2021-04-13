@@ -4,6 +4,39 @@ import numpy as np
 import scipy.stats as ss
 from sklearn.cluster import KMeans
 
+from .embed_utils import read_doc_indexed_data, pickle_load_from_file, pickle_dump_to_file
+
+
+def predict_uniq_clustids(kmeans_model_file, filename_docmeans, filename_savefile_uniq_clustids):
+
+    kmeans_model = pickle_load_from_file(kmeans_model_file)
+    uniq_docmeans = pickle_load_from_file(filename_docmeans)
+    
+    
+    uniq_docmeans = np.array(uniq_docmeans, dtype=np.float32)
+
+    uniq_clustids = kmeans_model.predict(uniq_docmeans)
+
+    pickle_dump_to_file(uniq_clustids, filename_savefile_uniq_clustids)
+    
+    return uniq_clustids
+
+def docids_to_clustlabels(filename_doc_indixed, filename_uniq_docids, filename_uniq_clustids, filename_savefile_clastids_hat):
+    _, docids_for_labeling = read_doc_indexed_data(filename_doc_indixed)
+    uniq_docids = pickle_load_from_file(filename_uniq_docids)
+    uniq_clustids = pickle_load_from_file(filename_uniq_clustids)
+    
+    id2clust = dict(zip(uniq_docids, uniq_clustids))
+
+    clustids_hat = [str(id2clust[id]) for id in docids_for_labeling] 
+
+    print(f"Saving to {filename_savefile_clastids_hat}")
+    with open(f"{filename_savefile_clastids_hat}", "w") as f:
+        for clustid in clustids_hat:
+            f.write(f"{clustid}\n")
+    print("Saved")
+
+    return clustids_hat
 
 def flatten_dict(dct):
     all_encoded = []
