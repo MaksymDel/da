@@ -18,3 +18,5 @@
 
 # GPU:
 # srun -p gpu --gres gpu:tesla:1 --mem=30G -t 24:00:00 --pty bash
+
+#python scripts-clustering/kmeans_train.py bert doc 8

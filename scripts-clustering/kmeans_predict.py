@@ -6,173 +6,37 @@ import numpy as np
 
 sys.path.append('.')
 
-from da.clust_utils import cramers_corrected_stat, kmeans_predict
+from da.clust_utils import predict_kmeans_sent, predict_kmeans_doc
 
 np.random.seed(21)
 
-# NMT sent clusters
-def predict_class_labels_sent(exp, langpair, NUM_CLUSTERS):
-
-    if exp == 'nmt':
-        model_name  = 'concat60'
-
-    elif exp == 'bert':
-        model_name  = 'xlm-roberta-base'
-        
-    else:
-        raise ValueError("{exp} is a wrong argument")
-
-    # for clustering_type in ["sent", "doc"]:
-    for clustering_type in ["sent"]:
-
-        print(clustering_type)
-
-        src_lang, tgt_lang = langpair.split('-') 
-
-        model_dir = f"experiments/{src_lang}_{tgt_lang}_{model_name}"
-        internals_dir = f"{model_dir}/internals-docs"
-        clusters_dir = f"{model_dir}/clustering_data"
-
-        if clustering_type == "sent":
-            kmeans_model_file = f"{internals_dir}/kmeans_train_sent_{NUM_CLUSTERS}.pkl"
-            savedir = f"{clusters_dir}/{NUM_CLUSTERS}_new/{exp}-clusters-sent"
-
-        elif clustering_type == "doc":
-            kmeans_model_file = f"{internals_dir}/kmeans_train_doc_{NUM_CLUSTERS}.pkl"
-            savedir = f"{clusters_dir}/{NUM_CLUSTERS}/{exp}-clusters-doc"
-
-        else:
-            raise ValueError(f"{clustering_type} is not known")
-
-        with open(kmeans_model_file, 'rb') as f:
-            kmeans = pickle.load(f)
-        
-        if not os.path.isdir(savedir):
-            os.makedirs(savedir)
-
-        for split in ['train', 'dev', 'test']:
-            print(split)
-            print("###")
-            
-            if clustering_type == "sent":
-                data_file = f"{internals_dir}/sent_means_{split}.pkl"
-            elif clustering_type == "doc":
-                data_file = f"{internals_dir}/doc_encoded_{split}.pkl"
-            else:
-                raise ValueError(f"{clustering_type} is not known")
-
-            with open(data_file, 'rb') as f:
-                data_encoded = pickle.load(f)
-            
-            labels_hat, labels_true = kmeans_predict(kmeans, data_encoded, split=='train')
-            
-            conf_matrix = pd.crosstab(labels_true, labels_hat)
-            corr_k = cramers_corrected_stat(conf_matrix)
-
-            print(f"Corr k: {corr_k}")
-            print(conf_matrix)
-
-            print(f"Saving to {savedir}")
-            i = 0
-            for domain_name, v in data_encoded.items():
-
-                if clustering_type == "sent":
-                    fn = f"{domain_name}.{split}.clust.{exp}.sent"
-                elif clustering_type == "doc":
-                    fn = f"{domain_name}.{split}.clust.{exp}.doc"
-                else:
-                    raise ValueError(f"{clustering_type} is not known")
-                
-                np.savetxt(f"{savedir}/{fn}", labels_hat[i:i+len(v)].astype(int), fmt="%i")
-                i += len(v)
-
-            # sns.heatmap(conf_matrix,
-            #             cmap="YlGnBu", annot=True, cbar=False)
-            # plt.show()
-            
-            print()
-
-
-def predict_class_labels_doc(exp, langpair, NUM_CLUSTERS):
-
-    if exp == 'nmt':
-        model_name  = 'concat60'
-
-    elif exp == 'bert':
-        model_name  = 'xlm-roberta-base'
-        
-    else:
-        raise ValueError("{exp} is a wrong argument")
-    
-    clustering_type = 'doc'
-    print(clustering_type)
-
-    src_lang, tgt_lang = langpair.split('-') 
-
-    model_dir = f"experiments/{src_lang}_{tgt_lang}_{model_name}"
-    internals_dir = f"{model_dir}/internals-docs"
-    clusters_dir = f"{model_dir}/clustering_data"
-
-    kmeans_model_file = f"{internals_dir}/new_kmeans_train_doc_{NUM_CLUSTERS}.pkl"
-    savedir = f"{clusters_dir}/{NUM_CLUSTERS}_new/{exp}-clusters-doc"
-
-    with open(kmeans_model_file, 'rb') as f:
-        kmeans = pickle.load(f)
-    
-    if not os.path.isdir(savedir):
-        os.makedirs(savedir)
-
-    for split in ['train', 'dev', 'test']:
-        print(split)
-        print("###")
-        
-        data_file = f"{internals_dir}/doc_encoded_{split}.pkl"
-
-        with open(data_file, 'rb') as f:
-            data_encoded = pickle.load(f)
-        
-        labels_hat, labels_true = kmeans_predict(kmeans, data_encoded, False)
-        
-        conf_matrix = pd.crosstab(labels_true, labels_hat)
-        corr_k = cramers_corrected_stat(conf_matrix)
-
-
-        print(f"Corr k: {corr_k}")
-        print(conf_matrix)
-
-        print(f"Saving to {savedir}")
-        i = 0
-        for domain_name, v in data_encoded.items():
-
-            if clustering_type == "sent":
-                fn = f"{domain_name}.{split}.clust.{exp}.sent"
-            elif clustering_type == "doc":
-                fn = f"{domain_name}.{split}.clust.{exp}.doc"
-            else:
-                raise ValueError(f"{clustering_type} is not known")
-            
-            np.savetxt(f"{savedir}/{fn}", labels_hat[i:i+len(v)].astype(int), fmt="%i")
-            i += len(v)
-
-        # sns.heatmap(conf_matrix,
-        #             cmap="YlGnBu", annot=True, cbar=False)
-        # plt.show()
-        
-        print()
-
-
 
 if __name__ == '__main__':
-    exp = sys.argv[1]
-    langpair = sys.argv[2]
-    sent_or_doc = sys.argv[3]
-    NUM_CLUSTERS = int(sys.argv[4])
+    encoder_type = sys.argv[1]
+    sent_or_doc = sys.argv[2]
+    NUM_CLUSTERS = int(sys.argv[3])
+    split = sys.argv[4] # train / dev / test
 
-    src_lang, tgt_lang = langpair.split("-")
+    assert encoder_type in ["nmt", "bert"]
+    assert sent_or_doc in ["sent", "doc"]
+    assert split in ["train", "dev", "test", "dev-cl", "test-cl"]
     
+    exp_folder = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/de_en_ParaCrawl_3m"
+    savedir = f"{exp_folder}/outputs/{encoder_type}"
+    savedir_clusters = f"{exp_folder}/outputs/cluster_labels/"
+    os.makedirs(savedir_clusters, exist_ok=True)
+    
+    filename_kmeans_model = f"{savedir}/kmeans_{encoder_type}_{sent_or_doc}_{NUM_CLUSTERS}.pkl"
+    filename_embeddings = f"{savedir}/{sent_or_doc}_means_train.pkl"
+
+    filename_savefile_labels = f"{savedir_clusters}/ParaCrawl.{split}.{encoder_type}.{sent_or_doc}.k_{NUM_CLUSTERS}.clustlabels"
+
     if sent_or_doc == "sent":
-        predict_class_labels_sent(exp, langpair, NUM_CLUSTERS)
+        predict_kmeans_sent(filename_kmeans_model, filename_embeddings, filename_savefile_labels)
     elif sent_or_doc == "doc":
-        predict_class_labels_doc(exp, langpair, NUM_CLUSTERS)
+        filename_uniq_docids = f"{savedir}/docids_{split}.pkl"
+        filename_doc_indixed_to_label = f"{exp_folder}/data/cl-ParaCrawl.de-en.docs.{split}" # only for docids
+
+        predict_kmeans_doc(filename_kmeans_model, filename_embeddings, filename_uniq_docids, filename_doc_indixed_to_label, filename_savefile_labels)
     else:
         raise ValueError("should be 'sent' or 'doc'")

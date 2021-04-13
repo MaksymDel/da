@@ -68,9 +68,9 @@ def extract_reps_sent(
     print("Extracting reps...")
     it = 0
     for i in range(0, len(data), batch_size):
-        # if it % 100 == 0:
-        #     print(it)
-        print(it)
+        if it % 10 == 0:
+            print(it)
+
 
         batch = data[i:i+batch_size]
         encoded_sent.extend(extract_reps_sent_batch(batch, tokenizer_hf, encoder_hf, layer_id))
