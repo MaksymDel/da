@@ -27,7 +27,7 @@ if __name__ == '__main__':
     os.makedirs(savedir_clusters, exist_ok=True)
     
     filename_kmeans_model = f"{savedir}/kmeans_{encoder_type}_{sent_or_doc}_{NUM_CLUSTERS}.pkl"
-    filename_embeddings = f"{savedir}/{sent_or_doc}_means_train.pkl"
+    filename_embeddings = f"{savedir}/{sent_or_doc}_means_{split}.pkl"
 
     filename_savefile_labels = f"{savedir_clusters}/ParaCrawl.{split}.{encoder_type}.{sent_or_doc}.k_{NUM_CLUSTERS}.clustlabels"
 
