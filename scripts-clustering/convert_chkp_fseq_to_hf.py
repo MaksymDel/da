@@ -67,6 +67,7 @@ def deen_paracrawl_3m():
             "data_path": data_path, 
             "spm_model_path": spm_model_file}
 
+
 def chkp60(langpair):
     src_lang, tgt_lang = langpair.split("-")
     # chkp 60
