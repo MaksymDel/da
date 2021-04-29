@@ -17,7 +17,7 @@
 
 
 # GPU:
-# srun -p gpu --gres gpu:tesla:1 --mem=30G -t 24:00:00 --pty bash
+# srun -p gpu --gres gpu:tesla:1 --mem=30G -t 192:00:00 --pty bash
 # srun --mem=70G -t 192:00:00 --pty bash 
 
 # python scripts-clustering/kmeans_train.py bert sent 8

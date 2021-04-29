@@ -13,7 +13,10 @@ if __name__ == '__main__':
     assert sent_or_doc in ["sent", "doc"]
     # assert split in ["train", "dev", "test", "dev-cl", "test-cl"]
 
-    basedir = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/de_en_ParaCrawl_3m"
+    # CHANGE THIS LINE
+    basedir = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/en_cs_ParaCrawl"
+    #
+    
     savedir = f"{basedir}/outputs/{encoder_type}"
     
     filename_embeddings = f"{savedir}/{sent_or_doc}_means_train.pkl"
