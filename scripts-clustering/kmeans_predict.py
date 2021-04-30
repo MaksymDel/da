@@ -22,8 +22,8 @@ if __name__ == '__main__':
     assert split in ["train", "dev", "test", "dev-cl", "test-cl"]
     
     # CHANGE THIS LINE
-    exp_folder = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/de_en_ParaCrawl_3m_20m_params"
-    data_exp_folder = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/de_en_ParaCrawl_3m"
+    exp_folder = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/en_cs_ParaCrawl"
+    data_exp_folder = "/gpfs/hpc/projects/nlpgroup/bergamot/paracrawl-cz-en/"
     #
 
     savedir = f"{exp_folder}/outputs/{encoder_type}"
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         predict_kmeans_sent(filename_kmeans_model, filename_embeddings, filename_savefile_labels)
     elif sent_or_doc == "doc":
         filename_uniq_docids = f"{savedir}/docids_{split}.pkl"
-        filename_doc_indixed_to_label = f"{data_exp_folder}/data/cl-ParaCrawl.de-en.docs.{split}" # only for docids
+        filename_doc_indixed_to_label = f"{data_exp_folder}/cl-ParaCrawl.en-cs.docs.{split}" # only for docids
 
         predict_kmeans_doc(filename_kmeans_model, filename_embeddings, filename_uniq_docids, filename_doc_indixed_to_label, filename_savefile_labels)
     else:
