@@ -13,8 +13,12 @@ def read_doc_indexed_data(filename_data_doc_indexed):
 
     with open(filename_data_doc_indexed, "r") as f:
         for l in f.readlines():
-            doc_ids.append(l.rstrip().split('\t')[0])
-            data_raw.append(l.rstrip().split('\t')[1])
+            if len(l.rstrip().split('\t')) >= 2:
+                doc_ids.append(l.rstrip().split('\t')[0])
+                data_raw.append(l.rstrip().split('\t')[1])
+            else:
+                data_raw.append(l.rstrip().split('\t')[0])
+
 
     print("Loaded")
     return data_raw, doc_ids
@@ -52,8 +56,7 @@ def extract_reps_sent_batch(src, tokenizer_hf, encoder_hf, layer_id):
 
 
 def extract_reps_sent(
-                        filename_data_doc_indexed,
-                        filename_savefile,
+                        data,
                         tokenizer_hf, 
                         encoder_hf, 
                         batch_size, 
@@ -62,8 +65,6 @@ def extract_reps_sent(
  
     # Sent embeddings
     encoded_sent = []
-
-    data, doc_ids = read_doc_indexed_data(filename_data_doc_indexed)
 
     print("Extracting reps...")
     it = 0
@@ -76,7 +77,7 @@ def extract_reps_sent(
         encoded_sent.extend(extract_reps_sent_batch(batch, tokenizer_hf, encoder_hf, layer_id))
         it += 1
 
-    pickle_dump_to_file(encoded_sent, filename_savefile)
+    return encoded_sent
 
 
 def compute_doc_reps(all_encoded, all_ids):
@@ -91,28 +92,6 @@ def compute_doc_reps(all_encoded, all_ids):
         ids_to_reps[k] = np.array(v).mean(0)
     
     return list(ids_to_reps.values()), list(ids_to_reps.keys())
-
-
-def extract_reps_doc(
-                        filename_data_doc_indexed,
-                        filename_sent_means,
-                        filename_savefile_doc_means,
-                        filename_savefile_doc_ids
-                        ):
-
-    # Just load Sent embeddings
-    encoded_sent = []
-    doc_ids = []
-
-    _, doc_ids = read_doc_indexed_data(filename_data_doc_indexed)
-    del _
-    encoded_sent = pickle_load_from_file(filename_sent_means)
-
-    # Compute doc embeddings
-    encoded_doc, docids = compute_doc_reps(encoded_sent, doc_ids)
-
-    pickle_dump_to_file(encoded_doc, filename_savefile_doc_means)
-    pickle_dump_to_file(docids, filename_savefile_doc_ids)
 
 
 def masked_mean(
