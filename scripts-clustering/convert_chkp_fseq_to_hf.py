@@ -54,6 +54,49 @@ def test(save_dir):
 #             "data_path": data_path, 
 #             "spm_model_path": spm_model_file}
 
+def encs_paracrawl_3m():
+    basedir_load = "/gpfs/hpc/projects/nlpgroup/bergamot/paracrawl-cz-en/data"
+    basedir_save = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/en_cs_ParaCrawl" 
+    fseq_checkpoint_path = f"{basedir_save}/mt_chkp/checkpoint60.pt"
+    data_path = f"{basedir_load}/bin-data-en-cs-ParaCrawl"
+    save_dir = f"{basedir_save}/hf"
+    spm_model_file=None
+
+
+    return {"fsmt_checkpoint_path": fseq_checkpoint_path,
+            "pytorch_dump_folder_path": save_dir, 
+            "data_path": data_path, 
+            "spm_model_path": spm_model_file}
+
+def deen_paracrawl_3m_20m_params():
+    basedir_load = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/de_en_ParaCrawl_3m/data"
+    basedir_save = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/de_en_ParaCrawl_3m_20m_params" 
+    fseq_checkpoint_path = f"{basedir_load}/models/de_en_ParaCrawl_3m_20m_params/checkpoint60.pt"
+    data_path = f"{basedir_load}/bin-data-de-en-ParaCrawl"
+    save_dir = f"{basedir_save}/hf"
+    spm_model_file=None
+
+
+    return {"fsmt_checkpoint_path": fseq_checkpoint_path,
+            "pytorch_dump_folder_path": save_dir, 
+            "data_path": data_path, 
+            "spm_model_path": spm_model_file}
+
+
+
+def deen_paracrawl_3m():
+    basedir = "/gpfs/hpc/projects/nlpgroup/bergamot/da/experiments/de_en_ParaCrawl_3m"
+    fseq_checkpoint_path = f"{basedir}/data/models/de_en_ParaCrawl_3m/checkpoint60.pt"
+    save_dir = f"{basedir}/hf"
+    data_path = f"{basedir}/data/bin-data-de-en-ParaCrawl"
+    spm_model_file=None
+
+
+    return {"fsmt_checkpoint_path": fseq_checkpoint_path,
+            "pytorch_dump_folder_path": save_dir, 
+            "data_path": data_path, 
+            "spm_model_path": spm_model_file}
+
 
 def chkp60(langpair):
     src_lang, tgt_lang = langpair.split("-")
@@ -119,9 +162,14 @@ if __name__ == '__main__':
     langpair = sys.argv[1] # de-en
     
     #chkp60()
-    args = chkp60(langpair)
+    #args = chkp60(langpair)
     #args = chkp60_para(langpair)
     
+    # CHANGE THIS LINE
+    #args = deen_paracrawl_3m_20m_params()
+    args = encs_paracrawl_3m()
+    #
+
     convert_fsmt_checkpoint_to_pytorch(**args)
 
     test(args['pytorch_dump_folder_path'])
