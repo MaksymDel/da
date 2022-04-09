@@ -1,5 +1,8 @@
-# DA
+# Translation Transformers Rediscover Inherent Data Domains
 
+This repository contains clustering pipeline for [Translation Transformers Rediscover Inherent Data Domains](https://aclanthology.org/2021.wmt-1.65.pdf). 
+
+See [this code repo](https://github.com/TartuNLP/inherent-domains-wmt21) for paper notebooks and NMT training scipts
 
 Dir stucture:
 ```
