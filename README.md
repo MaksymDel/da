@@ -1,6 +1,5 @@
 # DA
 
-Note: to use multidomain kmeans models you need scikit-learn==0.22.2.post1
 
 Dir stucture:
 ```
@@ -85,6 +84,10 @@ python scripts-clustering/extract_reps.py bert sent test
 ## Fine-tune
 Now that you have cluster (domain) separated data, 
 fine-tune an NMT baseline (from before).to each of the clusters and get results. 
+
+```
+Note: to use multidomain kmeans models you need scikit-learn==0.22.2.post1
+```
 
 Cite:
 ```
